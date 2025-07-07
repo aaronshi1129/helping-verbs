@@ -198,30 +198,215 @@
         // Game data
         const fillInBlanksData = [
             {
-                sentence: "She _____ studying English for three years.",
-                options: ["has", "have", "is", "are", "do"],
-                correct: "has"
+                sentence: "She _____ going to the store when I saw her.",
+                options: ["was", "is", "has", "had", "will"],
+                correct: "was"
             },
             {
-                sentence: "They _____ not going to the party tomorrow.",
-                options: ["are", "is", "have", "do", "did"],
-                correct: "are"
+                sentence: "They _____ finished their homework already.",
+                options: ["have", "has", "had", "are", "were"],
+                correct: "have"
             },
             {
-                sentence: "_____ you finished your homework yet?",
-                options: ["Have", "Has", "Do", "Are", "Did"],
-                correct: "Have"
+                sentence: "I _____ not believe what I just saw!",
+                options: ["could", "might", "should", "must", "shall"],
+                correct: "could"
             },
             {
-                sentence: "He _____ be at the meeting by 9 AM.",
-                options: ["must", "should", "can", "may", "might"],
+                sentence: "You _____ be quiet during the presentation.",
+                options: ["must", "may", "can", "shall", "would"],
                 correct: "must"
             },
             {
-                sentence: "I _____ like to visit Japan someday.",
-                options: ["would", "will", "should", "could", "might"],
+                sentence: "He _____ not like spicy food when he was younger.",
+                options: ["did", "do", "does", "has", "had"],
+                correct: "did"
+            },
+            {
+                sentence: "We _____ planning a trip to the mountains.",
+                options: ["are", "is", "was", "have", "will"],
+                correct: "are"
+            },
+            {
+                sentence: "It _____ been a long day for everyone.",
+                options: ["has", "have", "had", "is", "was"],
+                correct: "has"
+            },
+            {
+                sentence: "You _____ leave early if you finish your work.",
+                options: ["may", "must", "would", "should", "shall"],
+                correct: "may"
+            },
+            {
+                sentence: "He _____ reading a book when I entered.",
+                options: ["was", "is", "has", "had", "might"],
+                correct: "was"
+            },
+            {
+                sentence: "They _____ been waiting for over an hour.",
+                options: ["have", "had", "has", "are", "were"],
+                correct: "have"
+            },
+            {
+                sentence: "I _____ speak three languages fluently.",
+                options: ["can", "could", "might", "would", "may"],
+                correct: "can"
+            },
+            {
+                sentence: "She _____ always been interested in astronomy.",
+                options: ["has", "have", "had", "is", "was"],
+                correct: "has"
+            },
+            {
+                sentence: "We _____ go hiking if the weather improves.",
+                options: ["might", "must", "shall", "would", "can"],
+                correct: "might"
+            },
+            {
+                sentence: "The children _____ playing in the park.",
+                options: ["are", "is", "was", "have", "had"],
+                correct: "are"
+            },
+            {
+                sentence: "He _____ gone to the conference last week.",
+                options: ["had", "has", "have", "was", "were"],
+                correct: "had"
+            },
+            {
+                sentence: "I _____ be able to help you with your project.",
+                options: ["might", "must", "shall", "would", "should"],
+                correct: "might"
+            },
+            {
+                sentence: "You _____ try restarting your computer.",
+                options: ["should", "would", "must", "could", "shall"],
+                correct: "should"
+            },
+            {
+                sentence: "The rules _____ be followed at all times.",
+                options: ["must", "can", "may", "would", "shall"],
+                correct: "must"
+            },
+            {
+                sentence: "He _____ not know the answer to that question.",
+                options: ["does", "do", "did", "has", "had"],
+                correct: "does"
+            },
+            {
+                sentence: "We _____ been discussing this issue for hours.",
+                options: ["have", "has", "had", "are", "were"],
+                correct: "have"
+            },
+              {
+                sentence: "I _____ very excited about the concert tonight.",
+                options: ["am", "is", "are", "was", "were"],
+                correct: "am"
+              },
+              {
+                sentence: "She _____ a teacher at the local school.",
+                options: ["is", "am", "are", "was", "be"],
+                correct: "is"
+              },
+              {
+                sentence: "They _____ happy with the final decision.",
+                options: ["are", "is", "was", "be", "being"],
+                correct: "are"
+              },
+              {
+                sentence: "He _____ late for the meeting yesterday.",
+                options: ["was", "is", "are", "be", "been"],
+                correct: "was"
+              },
+              {
+                sentence: "We _____ planning to visit our grandparents.",
+                options: ["were", "are", "is", "was", "being"],
+                correct: "were"
+              },
+              {
+                sentence: "It’s important to _____ on time for the interview.",
+                options: ["be", "is", "am", "been", "being"],
+                correct: "be"
+              },
+              {
+                sentence: "The cake is _____ decorated when we arrived.",
+                options: ["being", "been", "be", "was", "are"],
+                correct: "being"
+              },
+              {
+                sentence: "She has _____ to Paris several times.",
+                options: ["been", "being", "be", "is", "are"],
+                correct: "been"
+              },
+              {
+                sentence: "I _____ my homework every evening.",
+                options: ["do", "did", "does", "have", "has"],
+                correct: "do"
+              },
+              {
+                sentence: "He _____ not understand the question.",
+                options: ["does", "do", "did", "has", "have"],
+                correct: "does"
+              },
+              {
+                sentence: "We _____ all the cleaning yesterday.",
+                options: ["did", "do", "does", "have", "had"],
+                correct: "did"
+              },
+              {
+                sentence: "They _____ finished their project already.",
+                options: ["have", "has", "had", "are", "do"],
+                correct: "have"
+              },
+              {
+                sentence: "She _____ never missed a single class.",
+                options: ["has", "have", "had", "is", "was"],
+                correct: "has"
+              },
+              {
+                sentence: "He _____ already left when I got there.",
+                options: ["had", "has", "have", "was", "did"],
+                correct: "had"
+              },
+              {
+                sentence: "I _____ speak French and Spanish fluently.",
+                options: ["can", "could", "may", "shall", "might"],
+                correct: "can"
+              },
+              {
+                sentence: "When I was younger, I _____ run much faster.",
+                options: ["could", "can", "might", "would", "may"],
+                correct: "could"
+              },
+              {
+                sentence: "You _____ want to double-check your answers.",
+                options: ["may", "might", "should", "shall", "must"],
+                correct: "may"
+              },
+              {
+                sentence: "She _____ join us if she finishes work early.",
+                options: ["might", "must", "can", "shall", "would"],
+                correct: "might"
+              },
+              {
+                sentence: "We _____ begin the ceremony shortly.",
+                options: ["shall", "should", "will", "must", "can"],
+                correct: "shall"
+              },
+              {
+                sentence: "You _____ wear a helmet when biking.",
+                options: ["should", "shall", "could", "would", "might"],
+                correct: "should"
+              },
+              {
+                sentence: "I _____ love to visit Italy someday.",
+                options: ["would", "could", "can", "might", "shall"],
                 correct: "would"
-            }
+              },
+              {
+                sentence: "You _____ follow the safety instructions carefully.",
+                options: ["must", "should", "shall", "could", "may"],
+                correct: "must"
+              }
         ];
 
         const categorizeData = {
