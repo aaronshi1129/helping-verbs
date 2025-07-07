@@ -1,0 +1,743 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auxiliary Verbs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .draggable {
+            cursor: grab;
+            user-select: none;
+        }
+        .draggable:active {
+            cursor: grabbing;
+        }
+        .droppable {
+            transition: all 0.2s ease;
+        }
+        .droppable.highlight {
+            background-color: #e0f2fe !important;
+            transform: scale(1.02);
+        }
+        .warning {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        .success-animation {
+            animation: success-pulse 0.5s;
+        }
+        @keyframes success-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .shuffle-animation {
+            animation: shuffle 0.8s ease-in-out;
+        }
+        @keyframes shuffle {
+            0% { transform: translateX(0) translateY(0) rotate(0deg); }
+            25% { transform: translateX(10px) translateY(-10px) rotate(5deg); }
+            50% { transform: translateX(-5px) translateY(5px) rotate(-3deg); }
+            75% { transform: translateX(5px) translateY(-5px) rotate(2deg); }
+            100% { transform: translateX(0) translateY(0) rotate(0deg); }
+        }
+        .main-content {
+            flex: 1;
+        }
+        footer {
+            margin-top: auto;
+        }
+        .verb-card {
+            transition: all 0.3s ease;
+        }
+        .verb-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .game-mode-btn.active {
+            background-color: #4338ca;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content container mx-auto px-4 py-8 max-w-6xl">
+        <h1 class="text-3xl font-bold text-center text-indigo-700 mb-2">Auxiliary Verbs</h1>
+        <p class="text-center text-gray-600 mb-4">Learn and practice auxiliary verbs and modal verbs in English</p>
+        
+        <div class="flex justify-center gap-4 mb-6">
+            <button id="mode-fill" class="game-mode-btn active bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                Fill in the Blanks
+            </button>
+            <button id="mode-categorize" class="game-mode-btn bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-2 px-4 rounded-lg transition">
+                Categorize Verbs
+            </button>
+            <button id="mode-match" class="game-mode-btn bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-2 px-4 rounded-lg transition">
+                Match Usage
+            </button>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div id="game-instructions" class="text-center mb-6 text-gray-700">
+                Complete each sentence by dragging the correct auxiliary verb into the blank space.
+            </div>
+
+            <!-- Fill in the Blanks Game -->
+            <div id="fill-game" class="game-container">
+                <div class="flex flex-wrap justify-center gap-4 mb-8" id="verbs-container">
+                    <!-- Verb cards will be generated here -->
+                </div>
+                
+                <div class="space-y-6" id="sentences-container">
+                    <!-- Sentences will be generated here -->
+                </div>
+            </div>
+
+            <!-- Categorize Verbs Game -->
+            <div id="categorize-game" class="game-container hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="category-box bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                        <h3 class="text-center font-bold text-blue-700 mb-4">Be Verbs</h3>
+                        <div class="category-drop min-h-[200px]" data-category="be"></div>
+                    </div>
+                    <div class="category-box bg-green-50 p-4 rounded-lg border-2 border-green-200">
+                        <h3 class="text-center font-bold text-green-700 mb-4">Auxiliary Verbs</h3>
+                        <div class="category-drop min-h-[200px]" data-category="auxiliary"></div>
+                    </div>
+                    <div class="category-box bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                        <h3 class="text-center font-bold text-purple-700 mb-4">Modal Verbs</h3>
+                        <div class="category-drop min-h-[200px]" data-category="modal"></div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-3 mb-6" id="category-verbs-container">
+                    <!-- Verb cards will be generated here -->
+                </div>
+            </div>
+
+            <!-- Match Usage Game -->
+            <div id="match-game" class="game-container hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4" id="modal-list">
+                        <!-- Modal verbs will be listed here -->
+                    </div>
+                    <div class="space-y-4" id="usage-list">
+                        <!-- Usage examples will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <button id="check-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                Check Answers
+            </button>
+            <button id="next-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                Next Challenge
+            </button>
+        </div>
+
+        <div id="result-message" class="mt-6 text-center text-xl font-bold hidden"></div>
+
+        <div class="mt-8 bg-indigo-50 rounded-lg p-6">
+            <h2 class="text-xl font-bold text-indigo-800 mb-4">Auxiliary Verbs Reference</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-indigo-700 mb-2">Be Verbs Be動詞</h3>
+                    <p class="text-gray-700">am, is, are, was, were, be, being, been</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-indigo-700 mb-2">Auxiliary Verbs 文法用助動詞</h3>
+                    <p class="text-gray-700">do, does, did, have, has, had, will</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-bold text-indigo-700 mb-2">Modal Verbs 情態助動詞</h3>
+                    <p class="text-gray-700">can, could, may, might, shall, should, will, would, must</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-indigo-800 text-indigo-100 py-6 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0">
+                <!-- Links -->
+                <div class="flex items-center space-x-4">
+                    <a href="https://www.aaronshi.cc" target="_blank" rel="noopener noreferrer" class="flex items-center hover:text-white transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Go to AaronShi.cc
+                    </a>
+                    <span class="text-indigo-300">|</span>
+                    <a href="https://app.aaronshi.cc" target="_blank" rel="noopener noreferrer" class="flex items-center hover:text-white transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Back to AaronShi.cc App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Game data
+        const fillInBlanksData = [
+            {
+                sentence: "She _____ studying English for three years.",
+                options: ["has", "have", "is", "are", "do"],
+                correct: "has"
+            },
+            {
+                sentence: "They _____ not going to the party tomorrow.",
+                options: ["are", "is", "have", "do", "did"],
+                correct: "are"
+            },
+            {
+                sentence: "_____ you finished your homework yet?",
+                options: ["Have", "Has", "Do", "Are", "Did"],
+                correct: "Have"
+            },
+            {
+                sentence: "He _____ be at the meeting by 9 AM.",
+                options: ["must", "should", "can", "may", "might"],
+                correct: "must"
+            },
+            {
+                sentence: "I _____ like to visit Japan someday.",
+                options: ["would", "will", "should", "could", "might"],
+                correct: "would"
+            }
+        ];
+
+        const categorizeData = {
+            be: ["am", "is", "are", "was", "were", "be", "being", "been"],
+            auxiliary: ["do", "does", "did", "have", "has", "had", "will"],
+            modal: ["can", "could", "may", "might", "shall", "should", "would", "must"]
+        };
+
+        const matchData = [
+            { modal: "can", usage: "ability or possibility 能力或可能性", example: "I can swim." },
+            { modal: "could", usage: "past ability or polite request 過去的能力或禮貌的請求", example: "Could you help me?" },
+            { modal: "may", usage: "permission or possibility 允許或可能性", example: "You may leave early." },
+            { modal: "might", usage: "possibility with uncertainty帶有不確定性的可能", example: "It might rain later." },
+            { modal: "must", usage: "obligation or logical conclusion 義務或邏輯上合理的結論", example: "You must finish your homework." },
+            { modal: "should", usage: "advice or expectation 建議或期待", example: "You should exercise regularly." },
+            { modal: "will", usage: "future action or willingness 未來的動作或表達意願", example: "I will help you tomorrow." },
+            { modal: "would", usage: "hypothetical situations or polite requests 假設的情境或禮貌的請求", example: "Would you like some tea?" }
+        ];
+
+        // Game state
+        let currentGame = "fill";
+        let currentFillIndex = 0;
+        let score = 0;
+        let matchPairs = [];
+
+        // DOM Elements
+        const modeButtons = document.querySelectorAll('.game-mode-btn');
+        const gameContainers = document.querySelectorAll('.game-container');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const resultMessage = document.getElementById('result-message');
+        const gameInstructions = document.getElementById('game-instructions');
+
+        // Initialize the game
+        document.addEventListener('DOMContentLoaded', () => {
+            initFillGame();
+            initCategorizeGame();
+            initMatchGame();
+            
+            // Event listeners for game mode buttons
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const mode = btn.id.split('-')[1];
+                    changeGameMode(mode);
+                });
+            });
+            
+            // Check button event
+            checkBtn.addEventListener('click', checkAnswers);
+            
+            // Next button event
+            nextBtn.addEventListener('click', nextChallenge);
+        });
+
+        function changeGameMode(mode) {
+            currentGame = mode;
+            
+            // Update active button
+            modeButtons.forEach(btn => {
+                if (btn.id === `mode-${mode}`) {
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-indigo-100', 'hover:bg-indigo-200', 'text-indigo-800');
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('bg-indigo-100', 'hover:bg-indigo-200', 'text-indigo-800');
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                }
+            });
+            
+            // Show the selected game
+            gameContainers.forEach(container => {
+                if (container.id === `${mode}-game`) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
+            });
+            
+            // Update instructions
+            updateInstructions();
+            
+            // Reset result message
+            resultMessage.classList.add('hidden');
+            
+            // Reset game if needed
+            if (mode === 'fill') {
+                currentFillIndex = 0;
+                loadFillQuestion();
+            } else if (mode === 'categorize') {
+                resetCategorizeGame();
+            } else if (mode === 'match') {
+                resetMatchGame();
+            }
+        }
+
+        function updateInstructions() {
+            switch(currentGame) {
+                case 'fill':
+                    gameInstructions.textContent = 'Complete each sentence by dragging the correct auxiliary verb into the blank space.';
+                    break;
+                case 'categorize':
+                    gameInstructions.textContent = 'Drag each verb to its correct category: Be Verbs, Auxiliary Verbs, or Modal Verbs.';
+                    break;
+                case 'match':
+                    gameInstructions.textContent = 'Match each modal verb with its correct usage by drawing lines between them.';
+                    break;
+            }
+        }
+
+        // Fill in the Blanks Game
+        function initFillGame() {
+            loadFillQuestion();
+        }
+
+        function loadFillQuestion() {
+            if (currentFillIndex >= fillInBlanksData.length) {
+                currentFillIndex = 0;
+            }
+            
+            const question = fillInBlanksData[currentFillIndex];
+            const verbsContainer = document.getElementById('verbs-container');
+            const sentencesContainer = document.getElementById('sentences-container');
+            
+            // Clear containers
+            verbsContainer.innerHTML = '';
+            sentencesContainer.innerHTML = '';
+            
+            // Add verb options
+            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+            shuffledOptions.forEach(verb => {
+                const verbCard = document.createElement('div');
+                verbCard.className = 'verb-card draggable bg-indigo-100 p-3 rounded-lg shadow-md text-center font-bold text-gray-800 w-24 flex items-center justify-center';
+                verbCard.setAttribute('draggable', 'true');
+                verbCard.setAttribute('data-verb', verb);
+                verbCard.textContent = verb;
+                verbsContainer.appendChild(verbCard);
+                
+                // Add drag events
+                verbCard.addEventListener('dragstart', dragStart);
+            });
+            
+            // Add sentence with blank
+            const sentenceParts = question.sentence.split('_____');
+            const sentenceDiv = document.createElement('div');
+            sentenceDiv.className = 'flex flex-wrap items-center justify-center text-lg';
+            
+            const part1 = document.createElement('span');
+            part1.textContent = sentenceParts[0];
+            sentenceDiv.appendChild(part1);
+            
+            const blankSpace = document.createElement('div');
+            blankSpace.className = 'droppable bg-gray-100 border-2 border-dashed border-gray-300 rounded-md w-24 h-10 mx-2 flex items-center justify-center';
+            blankSpace.setAttribute('data-correct', question.correct);
+            sentenceDiv.appendChild(blankSpace);
+            
+            const part2 = document.createElement('span');
+            part2.textContent = sentenceParts[1];
+            sentenceDiv.appendChild(part2);
+            
+            sentencesContainer.appendChild(sentenceDiv);
+            
+            // Add drop events
+            blankSpace.addEventListener('dragover', dragOver);
+            blankSpace.addEventListener('dragenter', dragEnter);
+            blankSpace.addEventListener('dragleave', dragLeave);
+            blankSpace.addEventListener('drop', drop);
+        }
+
+        // Categorize Game
+        function initCategorizeGame() {
+            resetCategorizeGame();
+        }
+
+        function resetCategorizeGame() {
+            const verbsContainer = document.getElementById('category-verbs-container');
+            verbsContainer.innerHTML = '';
+            
+            // Clear category boxes
+            document.querySelectorAll('.category-drop').forEach(box => {
+                box.innerHTML = '';
+            });
+            
+            // Create all verb cards
+            const allVerbs = [
+                ...categorizeData.be,
+                ...categorizeData.auxiliary,
+                ...categorizeData.modal
+            ].sort(() => Math.random() - 0.5);
+            
+            allVerbs.forEach(verb => {
+                const verbCard = document.createElement('div');
+                verbCard.className = 'verb-card draggable bg-indigo-100 p-2 rounded-lg shadow-md text-center font-bold text-gray-800 w-20 flex items-center justify-center';
+                verbCard.setAttribute('draggable', 'true');
+                verbCard.setAttribute('data-verb', verb);
+                
+                // Determine the correct category
+                let category;
+                if (categorizeData.be.includes(verb)) category = 'be';
+                else if (categorizeData.auxiliary.includes(verb)) category = 'auxiliary';
+                else category = 'modal';
+                
+                verbCard.setAttribute('data-category', category);
+                verbCard.textContent = verb;
+                verbsContainer.appendChild(verbCard);
+                
+                // Add drag events
+                verbCard.addEventListener('dragstart', dragStart);
+            });
+            
+            // Add drop events to category boxes
+            document.querySelectorAll('.category-drop').forEach(box => {
+                box.addEventListener('dragover', dragOver);
+                box.addEventListener('dragenter', dragEnter);
+                box.addEventListener('dragleave', dragLeave);
+                box.addEventListener('drop', dropCategory);
+            });
+        }
+
+        // Match Game
+        function initMatchGame() {
+            resetMatchGame();
+        }
+
+        function resetMatchGame() {
+            const modalList = document.getElementById('modal-list');
+            const usageList = document.getElementById('usage-list');
+            
+            modalList.innerHTML = '';
+            usageList.innerHTML = '';
+            matchPairs = [];
+            
+            // Shuffle the match data
+            const shuffledModals = [...matchData].sort(() => Math.random() - 0.5);
+            const shuffledUsages = [...matchData].sort(() => Math.random() - 0.5);
+            
+            // Create modal verb items
+            shuffledModals.forEach((item, index) => {
+                const modalItem = document.createElement('div');
+                modalItem.className = 'bg-blue-100 p-3 rounded-lg shadow flex items-center';
+                modalItem.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mr-3">${index + 1}</div>
+                    <div class="font-bold text-blue-800">${item.modal}</div>
+                `;
+                modalItem.setAttribute('data-modal', item.modal);
+                modalList.appendChild(modalItem);
+                
+                // Add click event for matching
+                modalItem.addEventListener('click', () => selectForMatching(modalItem, 'modal'));
+            });
+            
+            // Create usage items
+            shuffledUsages.forEach((item, index) => {
+                const usageItem = document.createElement('div');
+                usageItem.className = 'bg-purple-100 p-3 rounded-lg shadow';
+                usageItem.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold mr-3">${String.fromCharCode(65 + index)}</div>
+                        <div>
+                            <div class="font-bold text-purple-800">${item.usage}</div>
+                            <div class="text-sm text-gray-600 mt-1">${item.example}</div>
+                        </div>
+                    </div>
+                `;
+                usageItem.setAttribute('data-usage', item.usage);
+                usageList.appendChild(usageItem);
+                
+                // Add click event for matching
+                usageItem.addEventListener('click', () => selectForMatching(usageItem, 'usage'));
+            });
+            
+            // Update instructions for match game
+            gameInstructions.textContent = 'Click on a modal verb and then click on its matching usage to create a pair.';
+        }
+
+        let selectedModal = null;
+
+        function selectForMatching(element, type) {
+            if (type === 'modal') {
+                // Deselect any previously selected modal
+                document.querySelectorAll('#modal-list > div').forEach(el => {
+                    el.classList.remove('ring-2', 'ring-blue-500');
+                });
+                
+                // Select this modal
+                element.classList.add('ring-2', 'ring-blue-500');
+                selectedModal = element;
+            } else if (type === 'usage' && selectedModal) {
+                // Get the modal and usage values
+                const modalValue = selectedModal.getAttribute('data-modal');
+                const usageValue = element.getAttribute('data-usage');
+                
+                // Check if this pair already exists
+                const existingPairIndex = matchPairs.findIndex(pair => 
+                    pair.modal === modalValue || pair.usage === usageValue
+                );
+                
+                if (existingPairIndex !== -1) {
+                    // Remove the existing pair
+                    matchPairs.splice(existingPairIndex, 1);
+                }
+                
+                // Add the new pair
+                matchPairs.push({
+                    modal: modalValue,
+                    usage: usageValue
+                });
+                
+                // Visual feedback
+                element.classList.add('ring-2', 'ring-purple-500');
+                setTimeout(() => {
+                    element.classList.remove('ring-2', 'ring-purple-500');
+                }, 500);
+                
+                selectedModal.classList.remove('ring-2', 'ring-blue-500');
+                selectedModal = null;
+                
+                // Update the UI to show the matches
+                updateMatchesUI();
+            }
+        }
+
+        function updateMatchesUI() {
+            // Clear any previous match lines
+            const oldLines = document.querySelectorAll('.match-line');
+            oldLines.forEach(line => line.remove());
+            
+            // Show the current matches
+            matchPairs.forEach(pair => {
+                const modalElement = document.querySelector(`[data-modal="${pair.modal}"]`);
+                const usageElement = document.querySelector(`[data-usage="${pair.usage}"]`);
+                
+                if (modalElement && usageElement) {
+                    modalElement.classList.add('bg-blue-200');
+                    usageElement.classList.add('bg-purple-200');
+                    
+                    // Add a visual indicator of the match
+                    const matchIndicator = document.createElement('div');
+                    matchIndicator.className = 'text-green-600 font-bold ml-2';
+                    matchIndicator.textContent = '✓ Matched';
+                    
+                    // Find the correct match from the data
+                    const correctMatch = matchData.find(item => item.modal === pair.modal);
+                    const isCorrect = correctMatch && correctMatch.usage === pair.usage;
+                    
+                    if (!modalElement.querySelector('.match-indicator')) {
+                        const indicator = document.createElement('div');
+                        indicator.className = 'match-indicator ml-auto';
+                        indicator.textContent = isCorrect ? '✓' : '?';
+                        indicator.style.color = isCorrect ? 'green' : 'orange';
+                        modalElement.appendChild(indicator);
+                    }
+                }
+            });
+        }
+
+        // Drag and Drop Functions
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.getAttribute('data-verb'));
+            setTimeout(() => {
+                e.target.classList.add('opacity-50');
+            }, 0);
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function dragEnter(e) {
+            e.preventDefault();
+            e.target.classList.add('highlight');
+        }
+
+        function dragLeave(e) {
+            e.target.classList.remove('highlight');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            e.target.classList.remove('highlight');
+            
+            const verb = e.dataTransfer.getData('text/plain');
+            const verbElement = document.querySelector(`[data-verb="${verb}"]`);
+            
+            if (verbElement) {
+                verbElement.classList.remove('opacity-50');
+                
+                // Clone the verb element
+                const clone = verbElement.cloneNode(true);
+                clone.classList.remove('draggable');
+                clone.removeAttribute('draggable');
+                
+                // Clear the drop target and add the clone
+                e.target.innerHTML = '';
+                e.target.appendChild(clone);
+                
+                // Remove the original verb element
+                verbElement.remove();
+            }
+        }
+
+        function dropCategory(e) {
+            e.preventDefault();
+            e.target.classList.remove('highlight');
+            
+            const verb = e.dataTransfer.getData('text/plain');
+            const verbElement = document.querySelector(`[data-verb="${verb}"]`);
+            
+            if (verbElement) {
+                verbElement.classList.remove('opacity-50');
+                
+                // Clone the verb element
+                const clone = verbElement.cloneNode(true);
+                clone.classList.remove('draggable');
+                clone.removeAttribute('draggable');
+                
+                // Add the clone to the category
+                e.target.appendChild(clone);
+                
+                // Remove the original verb element
+                verbElement.remove();
+            }
+        }
+
+        // Check Answers
+        function checkAnswers() {
+            let correct = 0;
+            let total = 0;
+            
+            if (currentGame === 'fill') {
+                const dropZone = document.querySelector('.droppable');
+                const correctAnswer = dropZone.getAttribute('data-correct');
+                const droppedVerb = dropZone.textContent.trim();
+                
+                if (droppedVerb === correctAnswer) {
+                    correct = 1;
+                    dropZone.classList.add('bg-green-100', 'border-green-500', 'success-animation');
+                    showResult(true, `Correct! "${correctAnswer}" is the right auxiliary verb.`);
+                } else if (droppedVerb) {
+                    dropZone.classList.add('bg-red-100', 'border-red-500', 'warning');
+                    showResult(false, `Not quite. The correct answer is "${correctAnswer}".`);
+                } else {
+                    showResult(false, "Please drag a verb to the blank space first.");
+                    return;
+                }
+                total = 1;
+                
+            } else if (currentGame === 'categorize') {
+                const categoryBoxes = document.querySelectorAll('.category-drop');
+                let totalVerbs = 0;
+                
+                categoryBoxes.forEach(box => {
+                    const category = box.getAttribute('data-category');
+                    const verbElements = box.querySelectorAll('[data-verb]');
+                    
+                    verbElements.forEach(verbEl => {
+                        const verb = verbEl.getAttribute('data-verb');
+                        const verbCategory = verbEl.getAttribute('data-category');
+                        
+                        totalVerbs++;
+                        if (verbCategory === category) {
+                            correct++;
+                            verbEl.classList.add('bg-green-200', 'success-animation');
+                        } else {
+                            verbEl.classList.add('bg-red-200', 'warning');
+                        }
+                    });
+                });
+                
+                total = totalVerbs;
+                if (total === 0) {
+                    showResult(false, "Please categorize some verbs first.");
+                    return;
+                } else {
+                    showResult(correct === total, `You got ${correct} out of ${total} verbs correct!`);
+                }
+                
+            } else if (currentGame === 'match') {
+                total = matchPairs.length;
+                
+                matchPairs.forEach(pair => {
+                    const correctMatch = matchData.find(item => item.modal === pair.modal);
+                    if (correctMatch && correctMatch.usage === pair.usage) {
+                        correct++;
+                    }
+                });
+                
+                if (total === 0) {
+                    showResult(false, "Please create some matches first.");
+                    return;
+                } else {
+                    showResult(correct === total, `You got ${correct} out of ${total} matches correct!`);
+                }
+            }
+            
+            score = Math.round((correct / total) * 100);
+        }
+
+        function showResult(isCorrect, message) {
+            resultMessage.textContent = message;
+            resultMessage.className = `mt-6 text-center text-xl font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`;
+            resultMessage.classList.remove('hidden');
+        }
+
+        function nextChallenge() {
+            resultMessage.classList.add('hidden');
+            
+            if (currentGame === 'fill') {
+                currentFillIndex++;
+                loadFillQuestion();
+            } else if (currentGame === 'categorize') {
+                resetCategorizeGame();
+            } else if (currentGame === 'match') {
+                resetMatchGame();
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'95a6235ab1bb4a88',t:'MTc1MTcxMDkxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
